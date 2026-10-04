@@ -11,6 +11,7 @@ public class Main {
     private static void runDemo() {
         Renderer vectorRenderer = new VectorRenderer();
         Renderer rasterRenderer = new RasterRenderer();
+        Renderer asciiRenderer = new AsciiRenderer();
 
         int passed = 0;
 
@@ -44,7 +45,19 @@ public class Main {
             passed++;
         }
 
-        System.out.println("SUMMARY: " + passed + "/5 PASS");
+        String t6 = runT6(asciiRenderer);
+        System.out.println(t6);
+        if (t6.startsWith("T6 PASS")) {
+            passed++;
+        }
+
+        String t7 = runT7(asciiRenderer);
+        System.out.println(t7);
+        if (t7.startsWith("T7 PASS")) {
+            passed++;
+        }
+
+        System.out.println("SUMMARY: " + passed + "/7 PASS");
     }
 
     private static String runT1(Renderer renderer) {
@@ -118,8 +131,12 @@ public class Main {
 
         boolean sameObject = originalReference == afterReference;
         boolean stateUnchanged = idBefore == idAfter && radiusBefore == radiusAfter;
-        boolean correctResults = before.equals("VECTOR circle radius=2")
-                && after.equals("RASTER circle radius=2");
+
+        String expectedBefore = "VECTOR circle radius=2";
+        String expectedAfter = "RASTER circle radius=2";
+
+        boolean correctResults = before.equals(expectedBefore)
+                && after.equals(expectedAfter);
 
         if (sameObject && stateUnchanged && correctResults) {
             return "T5 PASS | sameObject=true | stateUnchanged=true"
@@ -129,6 +146,34 @@ public class Main {
         return "T5 FAIL | sameObject=" + sameObject
                 + " | stateUnchanged=" + stateUnchanged
                 + " | before=" + before
-                + " | after=" + after;
+                + " | after=" + after
+                + " | expectedBefore=" + expectedBefore
+                + " | expectedAfter=" + expectedAfter;
+    }
+
+    private static String runT6(Renderer renderer) {
+        Circle circle = new Circle(3, 2, renderer);
+        String actual = circle.execute();
+        String expected = "ASCII circle radius=2";
+
+        if (actual.equals(expected)) {
+            return "T6 PASS | Circle + AsciiRenderer | result=" + actual;
+        }
+
+        return "T6 FAIL | Circle + AsciiRenderer | result=" + actual
+                + " | expected=" + expected;
+    }
+
+    private static String runT7(Renderer renderer) {
+        Square square = new Square(4, 3, renderer);
+        String actual = square.execute();
+        String expected = "ASCII square side=3";
+
+        if (actual.equals(expected)) {
+            return "T7 PASS | Square + AsciiRenderer | result=" + actual;
+        }
+
+        return "T7 FAIL | Square + AsciiRenderer | result=" + actual
+                + " | expected=" + expected;
     }
 }
